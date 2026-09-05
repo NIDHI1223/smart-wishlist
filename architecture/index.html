@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart Wishlist — Architecture</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Azeret+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F1F2; --panel:#FFFFFF; --ink:#1A141B; --muted:#786B71;
+  --line:#E2D8DC; --line-2:#D3C6CB; --accent:#FF3F6C;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#130F15; --panel:#1B151C; --ink:#EFE7EA; --muted:#9C8D94;
+  --line:#2A222C; --line-2:#3A303C; --accent:#FF5C82;
+}}
+:root[data-theme="dark"]{
+  --bg:#130F15; --panel:#1B151C; --ink:#EFE7EA; --muted:#9C8D94;
+  --line:#2A222C; --line-2:#3A303C; --accent:#FF5C82;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.6 Figtree,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:940px; margin:0 auto; padding:clamp(40px,6vw,72px) 20px clamp(48px,6vw,88px)}
+.eyebrow{font-family:"Azeret Mono",monospace; font-size:9.5px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 14px}
+h1{font-family:"Bricolage Grotesque",sans-serif; font-size:clamp(26px,4vw,38px); line-height:1.12;
+  letter-spacing:-.02em; font-weight:700; margin:0 0 16px; text-wrap:balance}
+.lede{margin:0 0 clamp(34px,5vw,52px); color:var(--muted); max-width:64ch; font-size:15.5px}
+.lede b{color:var(--ink); font-weight:600}
+.back{display:inline-block; margin-bottom:26px; font-size:13.5px; font-weight:600;
+  color:var(--accent); text-decoration:none}
+.back:hover{text-decoration:underline}
+.notes{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:clamp(20px,3vw,34px); margin-top:clamp(40px,5vw,64px);
+  padding-top:clamp(28px,4vw,40px); border-top:1px solid var(--line)}
+.notes h3{margin:0 0 7px; font-size:14.5px; font-weight:700; letter-spacing:-.01em}
+.notes p{margin:0; font-size:13.5px; line-height:1.6; color:var(--muted)}
+.notes code{font-family:"Azeret Mono",monospace; font-size:12px; color:var(--ink)}
+/* ---------- architecture flowchart ---------- */
+.arch{margin:0}
+.arch-h{font-family:"Azeret Mono",monospace; font-size:9.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); margin:0 0 26px; font-weight:400; text-align:center}
+.arch figure{margin:0}
+.arch svg{display:block; width:100%; height:auto; border-radius:4px}
+.arch figcaption{margin:26px auto 0; max-width:68ch; text-align:center; font-size:13.5px;
+  line-height:1.65; color:var(--muted)}
+/* the sheet is always light, the way a printed flowchart is — so it reads the same in either theme */
+.f-ttl{font-size:17px; font-weight:800; fill:#FFFFFF; letter-spacing:.01em}
+.f-t{font-size:13px; font-weight:600; fill:#1E2333}
+.f-s{font-size:10.8px; font-weight:400; fill:#5C6373}
+.f-l{font-size:10.5px; font-weight:500; fill:#7C8497}
+.f-mut{fill:#4A5163}
+.n-blue{fill:#CFE9F7; stroke:#5FA8D3; stroke-width:1.2}
+.n-yellow{fill:#FCEFA8; stroke:#C9A227; stroke-width:1.2}
+.n-green{fill:#D6EFC2; stroke:#7CB35C; stroke-width:1.2}
+.n-grey{fill:#EEF0F3; stroke:#B9BFC9; stroke-width:1.2}
+.f-ln{fill:none; stroke:#7C8497; stroke-width:1.4}
+.f-acc{stroke:#C9A227; stroke-width:1.6}
+.f-acct text{fill:#8A6D0B}
+@media (max-width:720px){.arch{padding-left:12px; padding-right:12px} .arch figcaption{font-size:12.5px}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../prototype/">&larr; Back to the prototype</a>
+  <p class="eyebrow">Smart Wishlist &#183; architecture</p>
+  <h1>How one card gets chosen</h1>
+  <p class="lede">The prototype decides in the browser, on every screen she opens. It starts from her
+  <b>entire</b> Wishlist and throws almost all of it away. Every number below is the literal value in
+  the code &#8212; the floors in <code>SURFACE</code>, the weights in <code>W</code>, the signal ranks in
+  <code>signalOf()</code>.</p>
+
+  <section class="arch">
+    <figure>
+     <svg viewBox="0 0 960 1470" role="img" aria-label="Flowchart. Her saves, bags and dismisses are collected and feed the data sources: catalogue attributes, colour, price, per-size stock, what she saved and when, and what is on screen. Those build a feature vector per product. The candidate set is every item on her wishlist. If a candidate fails the hard gates it is dropped. If it has a real change on it — a price drop, size back, or only a few left — that change goes straight to showing the card. Otherwise it is scored as 0.55 affinity plus 0.30 taste plus 0.09 recency plus 0.06 quality. If the score is below the surface floor nothing renders. If it is above, one card is shown on the product page, the bag, or the listing and search strip, and every action she takes then changes the next decision.">
+      <!-- banner -->
+      <rect x="0" y="0" width="960" height="44" fill="#1E3A5F"/>
+      <text x="480" y="29" class="f-ttl" text-anchor="middle">Smart Wishlist &#8212; how one card gets chosen</text>
+      <rect x="0" y="60" width="960" height="1400" fill="#FFFFFF" stroke="#D8DBE3"/>
+
+      <g transform="translate(0,60)">
+        <defs>
+          <marker id="f-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10z" fill="#7C8497"/></marker>
+        </defs>
+
+        <!-- 1 · input -->
+        <polygon points="598,30 800,30 782,92 580,92" class="n-blue"/>
+        <text x="690" y="55" class="f-t" text-anchor="middle">Her saves, bags</text>
+        <text x="690" y="76" class="f-t" text-anchor="middle">and dismisses</text>
+
+        <!-- 2 · data sources -->
+        <rect x="180" y="132" width="600" height="76" rx="3" class="n-blue"/>
+        <text x="480" y="157" class="f-t" text-anchor="middle">Data Sources</text>
+        <text x="480" y="178" class="f-s" text-anchor="middle">Catalogue attributes &#183; Colour &#183; Price &amp; MRP &#183; Per-size stock</text>
+        <text x="480" y="195" class="f-s" text-anchor="middle">What she saved and when &#183; What is on screen right now</text>
+
+        <!-- 3 · features -->
+        <rect x="330" y="248" width="300" height="76" rx="3" class="n-blue"/>
+        <text x="480" y="273" class="f-t" text-anchor="middle">Feature Vector per Product</text>
+        <text x="480" y="294" class="f-s" text-anchor="middle">slot &#183; hue / chroma &#183; occasion</text>
+        <text x="480" y="311" class="f-s" text-anchor="middle">price tier &#183; quality &#183; gender</text>
+
+        <!-- 4 · candidates -->
+        <rect x="330" y="364" width="300" height="62" rx="3" class="n-blue"/>
+        <text x="480" y="389" class="f-t" text-anchor="middle">Candidates</text>
+        <text x="480" y="410" class="f-s" text-anchor="middle">every item on her Wishlist</text>
+
+        <!-- 5 · gates -->
+        <polygon points="480,464 710,520 480,576 250,520" class="n-yellow"/>
+        <text x="480" y="513" class="f-t" text-anchor="middle">Passes the hard gates?</text>
+        <text x="480" y="533" class="f-s" text-anchor="middle">not dismissed &#183; not in the bag &#183; not on screen</text>
+        <text x="480" y="549" class="f-s" text-anchor="middle">in this category &#183; saved long enough ago</text>
+
+        <!-- 6 · change -->
+        <polygon points="480,620 710,676 480,732 250,676" class="n-yellow"/>
+        <text x="480" y="672" class="f-t" text-anchor="middle">A real change on it?</text>
+        <text x="480" y="692" class="f-s" text-anchor="middle">price dropped &#183; size back &#183; only a few left</text>
+
+        <!-- 7 · score -->
+        <rect x="305" y="776" width="350" height="76" rx="3" class="n-blue"/>
+        <text x="480" y="801" class="f-t" text-anchor="middle">Relevance Score</text>
+        <text x="480" y="822" class="f-s" text-anchor="middle">0.55 affinity + 0.30 taste</text>
+        <text x="480" y="839" class="f-s" text-anchor="middle">+ 0.09 recency + 0.06 quality</text>
+
+        <!-- 8 · floor -->
+        <polygon points="480,894 690,950 480,1006 270,950" class="n-yellow"/>
+        <text x="480" y="946" class="f-t" text-anchor="middle">Score above the floor?</text>
+        <text x="480" y="966" class="f-s" text-anchor="middle">0.42 product page &#183; 0.52 bag &#183; 0.55 listing</text>
+
+        <!-- 9 · show -->
+        <rect x="350" y="1048" width="260" height="62" rx="3" class="n-green"/>
+        <text x="480" y="1073" class="f-t" text-anchor="middle">Show One Card</text>
+        <text x="480" y="1094" class="f-s" text-anchor="middle">with the reason it earned</text>
+
+        <!-- 10 · surface -->
+        <polygon points="480,1156 770,1206 480,1256 190,1206" class="n-yellow"/>
+        <text x="480" y="1202" class="f-t" text-anchor="middle">Which surface?</text>
+        <text x="480" y="1222" class="f-s" text-anchor="middle">Product-page card OR Bag card OR Listing &amp; Search strip</text>
+
+        <!-- 11 · delivered -->
+        <rect x="350" y="1300" width="260" height="56" rx="28" class="n-green"/>
+        <text x="480" y="1333" class="f-t" text-anchor="middle">Card shown to her</text>
+
+        <!-- terminals on the left -->
+        <rect x="40" y="493" width="150" height="54" rx="3" class="n-grey"/>
+        <text x="115" y="525" class="f-t f-mut" text-anchor="middle">Dropped</text>
+
+        <rect x="40" y="919" width="150" height="62" rx="3" class="n-grey"/>
+        <text x="115" y="944" class="f-t f-mut" text-anchor="middle">Stay quiet</text>
+        <text x="115" y="965" class="f-s" text-anchor="middle">nothing renders</text>
+
+        <!-- main spine -->
+        <g class="f-ln" marker-end="url(#f-ar)">
+          <line x1="690" y1="92"   x2="690" y2="130"/>
+          <line x1="480" y1="208"  x2="480" y2="246"/>
+          <line x1="480" y1="324"  x2="480" y2="362"/>
+          <line x1="480" y1="426"  x2="480" y2="462"/>
+          <line x1="480" y1="576"  x2="480" y2="618"/>
+          <line x1="480" y1="732"  x2="480" y2="774"/>
+          <line x1="480" y1="852"  x2="480" y2="892"/>
+          <line x1="480" y1="1006" x2="480" y2="1046"/>
+          <line x1="480" y1="1110" x2="480" y2="1154"/>
+          <line x1="480" y1="1256" x2="480" y2="1298"/>
+        </g>
+        <g class="f-l">
+          <text x="700" y="116">Collect</text>
+          <text x="492" y="232">Feed</text>
+          <text x="492" y="348">Build</text>
+          <text x="492" y="448">Filter</text>
+          <text x="492" y="602">YES</text>
+          <text x="492" y="758">NO &#183; score it</text>
+          <text x="492" y="878">Evaluate</text>
+          <text x="492" y="1032">YES</text>
+          <text x="492" y="1138">Choose</text>
+          <text x="492" y="1282">Deliver</text>
+        </g>
+
+        <!-- NO branches -->
+        <g class="f-ln" marker-end="url(#f-ar)">
+          <path d="M250 520 L192 520"/>
+          <path d="M270 950 L192 950"/>
+        </g>
+        <g class="f-l">
+          <text x="222" y="510" text-anchor="middle">NO</text>
+          <text x="231" y="940" text-anchor="middle">NO</text>
+        </g>
+
+        <!-- a change goes straight to the card -->
+        <path class="f-ln f-acc" marker-end="url(#f-ar)" d="M710 676 L750 676 L750 1079 L612 1079"/>
+        <g class="f-l f-acct">
+          <text x="762" y="700">YES &#8212; a change</text>
+          <text x="762" y="716">outranks a match,</text>
+          <text x="762" y="732">so it skips scoring</text>
+        </g>
+
+        <!-- feedback -->
+        <path class="f-ln" marker-end="url(#f-ar)" d="M610 1328 L900 1328 L900 61 L802 61"/>
+        <g class="f-l">
+          <text x="890" y="880" text-anchor="end">Every action she takes</text>
+          <text x="890" y="896" text-anchor="end">changes the next decision</text>
+        </g>
+      </g>
+     </svg>
+     <figcaption>The whole thing runs in this tab. It starts from her entire Wishlist and throws
+      almost all of it away &#8212; and if nothing clears the floor for the surface she is on, the
+      right answer is to show nothing at all.</figcaption>
+    </figure>
+  </section>
+
+  <div class="notes">
+    <div>
+      <h3>Nothing is authored</h3>
+      <p>Every feature is read off the product's own Myntra fields &#8212; category into a slot, colour
+      hex into hue and chroma, usage into occasion, price into a tier. There is no pair table and no
+      per-item rule to maintain.</p>
+    </div>
+    <div>
+      <h3>A change beats a match</h3>
+      <p>A price drop, a size back in stock, or only a few left is a fact about the product, not a
+      guess about her. On the bag, listing and search it skips scoring entirely. Scores only rank
+      <em>within</em> a priority.</p>
+    </div>
+    <div>
+      <h3>Silence is an answer</h3>
+      <p>If nothing clears the floor for the surface she is on, the card does not render. That path
+      is drawn because it is the one that runs most of the time, and it is what keeps the strip
+      worth looking at.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>
