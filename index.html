@@ -22,12 +22,11 @@ main{max-width:900px;margin:0 auto;padding:12vh 24px 10vh}
 h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}
 .lede{color:var(--muted);margin:0 0 40px;max-width:56ch}
 .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-a.card{display:block;padding:22px;border:1px solid var(--line);border-radius:12px;
-  background:var(--panel);text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+a.card{display:flex;align-items:center;gap:10px;padding:20px 22px;border:1px solid var(--line);
+  border-radius:12px;background:var(--panel);text-decoration:none;color:inherit;font-size:17px;
+  font-weight:600;letter-spacing:-.01em;transition:border-color .15s,transform .15s}
 a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
-a.card h2{margin:0 0 8px;font-size:19px;letter-spacing:-.01em}
-a.card p{margin:0;color:var(--muted);font-size:14.5px}
-.go{display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:var(--accent)}
+a.card .arr{margin-left:auto;color:var(--accent);font-weight:600}
 h3.sec{margin:44px 0 14px;font-size:11px;font-weight:700;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted)}
 .two{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
@@ -50,33 +49,15 @@ footer a{color:var(--accent)}
   evidence argues for, and one shows how it decides.</p>
 
   <div class="cards">
-    <a class="card" href="engine/">
-      <h2>Discovery Engine</h2>
-      <p>A read-only interface over the validated research artifacts — insights, the evidence
-      trail behind each one, themes, runs and reports. Ask it a question and it answers by
-      retrieval, never invention.</p>
-      <span class="go">Open the engine &rarr;</span>
-    </a>
-    <a class="card" href="prototype/">
-      <h2>Smart Wishlist prototype</h2>
-      <p>A working shopping app on a 60-product catalogue, with a wishlist layer that resurfaces a
-      saved item only when it earns the space: something changed on it, or it genuinely matches
-      what is on screen.</p>
-      <span class="go">Open the prototype &rarr;</span>
-    </a>
-    <a class="card" href="architecture/">
-      <h2>How it decides</h2>
-      <p>The prototype's architecture as one flowchart: what feeds the decision, the gates that
-      throw most of the wishlist away, why a real change skips scoring, and the floor below which
-      nothing renders at all.</p>
-      <span class="go">Open the diagram &rarr;</span>
-    </a>
+    <a class="card" href="engine/">Discovery Engine<span class="arr">&rarr;</span></a>
+    <a class="card" href="prototype/">Smart Wishlist prototype<span class="arr">&rarr;</span></a>
+    <a class="card" href="architecture/">Smart Wishlist architecture<span class="arr">&rarr;</span></a>
   </div>
 
   <h3 class="sec">Primary research &#183; live</h3>
   <div class="two">
     <a class="live" href="https://docs.google.com/forms/d/e/1FAIpQLSfYG_Ih3OONDaDk4gCxGVADXpPI94QWJmSWZOZu8yh7K5rx0A/viewform" target="_blank" rel="noopener">
-      <span class="dot"></span>Take the survey<span class="arr">&rarr;</span>
+      <span class="dot"></span>Google form<span class="arr">&rarr;</span>
     </a>
     <a class="live" href="https://docs.google.com/spreadsheets/d/1Q8gFIpk0y_aE6bW1zZ67oF6EhcoBSfcAnVtsIYiJWYU/edit?resourcekey=&amp;gid=1757307896#gid=1757307896" target="_blank" rel="noopener">
       <span class="dot"></span>Responses<span class="arr">&rarr;</span>
