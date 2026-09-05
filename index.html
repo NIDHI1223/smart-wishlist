@@ -28,6 +28,16 @@ a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
 a.card h2{margin:0 0 8px;font-size:19px;letter-spacing:-.01em}
 a.card p{margin:0;color:var(--muted);font-size:14.5px}
 .go{display:inline-block;margin-top:14px;font-size:13px;font-weight:600;color:var(--accent)}
+h3.sec{margin:44px 0 6px;font-size:11px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted)}
+.sec-sub{margin:0 0 16px;color:var(--muted);font-size:14px;max-width:62ch}
+.two{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+a.live{display:block;padding:20px 22px;border:1px solid var(--line);border-radius:12px;
+  background:none;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+a.live:hover{border-color:var(--accent);transform:translateY(-2px)}
+a.live h2{margin:0 0 8px;font-size:17px;letter-spacing:-.01em;display:flex;align-items:center;gap:9px}
+a.live p{margin:0;color:var(--muted);font-size:14px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
 footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
   color:var(--muted);font-size:13.5px}
 footer a{color:var(--accent)}
@@ -61,6 +71,24 @@ footer a{color:var(--accent)}
       throw most of the wishlist away, why a real change skips scoring, and the floor below which
       nothing renders at all.</p>
       <span class="go">Open the diagram &rarr;</span>
+    </a>
+  </div>
+
+  <h3 class="sec">Primary research &#183; live</h3>
+  <p class="sec-sub">The corpus behind the Discovery Engine is public posts people wrote for their
+  own reasons. This survey asks the question directly, and the sheet is what has come back so far.</p>
+  <div class="two">
+    <a class="live" href="https://docs.google.com/forms/d/e/1FAIpQLSfYG_Ih3OONDaDk4gCxGVADXpPI94QWJmSWZOZu8yh7K5rx0A/viewform" target="_blank" rel="noopener">
+      <h2><span class="dot"></span>Take the survey</h2>
+      <p>Online shopping &amp; wishlist survey — a few questions about how you shop and what you do
+      with the things you save. About 3 minutes.</p>
+      <span class="go">Open the form &rarr;</span>
+    </a>
+    <a class="live" href="https://docs.google.com/spreadsheets/d/1Q8gFIpk0y_aE6bW1zZ67oF6EhcoBSfcAnVtsIYiJWYU/edit?resourcekey=&amp;gid=1757307896#gid=1757307896" target="_blank" rel="noopener">
+      <h2><span class="dot"></span>Responses</h2>
+      <p>Every answer as it lands, in the sheet the form writes to. Raw — nothing coded, nothing
+      filtered.</p>
+      <span class="go">Open the responses &rarr;</span>
     </a>
   </div>
 
