@@ -18,9 +18,8 @@
 body{margin:0;background:var(--bg);color:var(--ink);
   font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased}
-main{max-width:900px;margin:0 auto;padding:12vh 24px 10vh}
+main{max-width:900px;margin:0 auto;padding:12vh 24px 14vh}
 h1{font-size:clamp(28px,5vw,40px);line-height:1.15;margin:0 0 12px;letter-spacing:-.02em}
-.lede{color:var(--muted);margin:0 0 40px;max-width:56ch}
 .cards{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 a.card{display:flex;align-items:center;gap:10px;padding:20px 22px;border:1px solid var(--line);
   border-radius:12px;background:var(--panel);text-decoration:none;color:inherit;font-size:17px;
@@ -36,18 +35,11 @@ a.live{display:flex;align-items:center;gap:10px;padding:18px 22px;border:1px sol
 a.live:hover{border-color:var(--accent);transform:translateY(-2px)}
 a.live .arr{margin-left:auto;color:var(--accent)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
-footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);
-  color:var(--muted);font-size:13.5px}
-footer a{color:var(--accent)}
 </style>
 </head>
 <body>
 <main>
   <h1>Wishlist&#8209;to&#8209;purchase</h1>
-  <p class="lede">One question: why a saved product so rarely becomes a bought one, and what a
-  wishlist would have to do differently. One page reads the evidence, one is the product that
-  evidence argues for, and one shows how it decides.</p>
-
   <div class="cards">
     <a class="card" href="engine/">Discovery Engine<span class="arr">&rarr;</span></a>
     <a class="card" href="prototype/">Smart Wishlist prototype<span class="arr">&rarr;</span></a>
@@ -66,12 +58,6 @@ footer a{color:var(--accent)}
       <span class="dot"></span>User Interviews<span class="arr">&rarr;</span>
     </a>
   </div>
-
-  <footer>
-    Every page here is static and self-contained — no server, no build step, no tracking.
-    Product photography and copy in the prototype belong to Myntra and are shown for design
-    review only.
-  </footer>
 </main>
 </body>
 </html>
