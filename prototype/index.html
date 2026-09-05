@@ -620,6 +620,11 @@ function decide(surface,ctxs,opts){
     if(ST.bag.some(b=>b.id===id)){trace.push({id,v:'out',why:'already in the bag'}); continue}
     if(onScreen.some(c=>c.id===id)){trace.push({id,v:'out',
       why:surface==='bag'?'already in the bag':surface==='search'?'already in the first row of results':'this is the item on screen'}); continue}
+    /* the strip belongs to the list she is looking at. A saved item may only appear in it if
+       it is in that list — a price drop on a women's top has no business on a men's shirts
+       page, however real the drop is. Nothing here overrides this, signals included. */
+    if(opts.only&&!opts.only.has(id)){
+      trace.push({id,v:'out',why:'not '+(surface==='search'?'a result for this search':'in this category')}); continue}
     const sig=signalOf(id);
     if(sig&&sig.skip){trace.push({id,v:'out',why:sig.skip}); continue}
     /* a reminder she does not need: she saved it days ago and still remembers */
@@ -657,7 +662,7 @@ function decide(surface,ctxs,opts){
   }
   if(opts.many){
     const cards=p1.map(c=>({id:c.id,type:c.type,text:c.text,was:c.was}));
-    /* on a browse surface a real change earns a place even if the kind doesn't match */
+    /* within the list, a real change earns a place even if the pairing score is thin */
     p2.filter(c=>c.total>=floor||c.sig).forEach(c=>cards.push({
       id:c.id,
       type:c.sig?c.sig.type:'match',
@@ -849,7 +854,7 @@ function scrCats(){
 }
 function scrList(r){
   const c=CATS.find(x=>x.id===r.cat)||{ids:[],label:r.cat};
-  const d=decide('list',contextFor(r),{many:true});
+  const d=decide('list',contextFor(r),{many:true,only:new Set(c.ids)});
   const rail=smartRail(d.cards,'list');
   const shown=d.cards&&d.cards.length?c.ids.filter(i=>!d.cards.some(x=>x.id===i)):c.ids;
   return `${statusbar}${topbar(c.label+' ('+c.ids.length+')',true)}<div class="scroll">
@@ -864,7 +869,7 @@ function scrSearch(r){
   const q=(r.q||'').toLowerCase().trim();
   const hits=searchHits(q);
   const pin=ST.searchPin&&sameSearch(ST.searchPin.q,q)?ST.searchPin.id:null;
-  const d=q&&hits.length?decide('search',contextFor(r),{q,pin,many:true}):null;
+  const d=q&&hits.length?decide('search',contextFor(r),{q,pin,many:true,only:new Set(hits)}):null;
   const card=d?smartRail(d.cards,'search'):'';
   const shown=d&&d.cards&&d.cards.length?hits.filter(i=>!d.cards.some(x=>x.id===i)):hits;
   if(d&&d.cards) d.cards.forEach(c=>{ST.searchSeen[c.id]=q});
